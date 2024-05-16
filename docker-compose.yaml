@@ -6,7 +6,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./db:/var/lib/postgresql/data
+      - ./dbpersist:/var/lib/postgresql/data
     env_file:
       - ./app.env
 
