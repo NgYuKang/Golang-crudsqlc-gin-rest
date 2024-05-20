@@ -20,4 +20,7 @@ func (cr *ContactRouter) ContactRouter(rg *gin.RouterGroup) {
 
 	router.POST("/", cr.contractController.CreateContact)
 	router.PATCH("/:contactId", cr.contractController.UpdateContact)
+	router.GET("/:contactId", cr.contractController.GetContactById)
+	router.GET("/", cr.contractController.ListContacts)
+	router.DELETE("/:contactId", cr.contractController.DeleteContactById)
 }
