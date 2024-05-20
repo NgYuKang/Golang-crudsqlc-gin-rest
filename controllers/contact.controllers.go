@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"context"
+	"database/sql"
 	db "golang-crudsqlc-gin-rest/db/sqlc"
 	"golang-crudsqlc-gin-rest/schemas"
+	"log"
 	"net/http"
 	"time"
 
@@ -52,5 +54,38 @@ func (cc *ContactController) CreateContact(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "successfully created contact", "contact": contact})
+
+}
+
+func (cc *ContactController) UpdateContact(ctx *gin.Context) {
+	var payload *schemas.UpdateContact
+	contactId := ctx.Param("contactId")
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "message": "failed payload"})
+		return
+	}
+
+	timeNow := time.Now()
+	args := &db.UpdateContactParams{}
+	args.ContactID.Scan(contactId)
+	args.FirstName.Scan(payload.FirstName)
+	args.FirstName.Scan(payload.LastName)
+	args.FirstName.Scan(payload.PhoneNumber)
+	args.FirstName.Scan(payload.Street)
+	args.UpdatedAt.Scan(timeNow)
+	log.Println(args)
+
+	contact, err := cc.db.UpdateContact(ctx, *args)
+	if err != nil {
+		log.Println(err)
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "not found"})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "message": "failed retrieve"})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "ok", "contact": contact})
 
 }
