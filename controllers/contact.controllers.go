@@ -157,7 +157,7 @@ func (cc *ContactController) DeleteContactById(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "message": "failed payload"})
 		return
 	}
-	deletedContact, err := cc.db.GetContactById(ctx, parsedId)
+	err = cc.db.DeleteContact(ctx, parsedId)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "failed to delete"})
@@ -167,6 +167,5 @@ func (cc *ContactController) DeleteContactById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
 		"message": "Successfully deleted",
-		"contact": deletedContact,
 	})
 }
